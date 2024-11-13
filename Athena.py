@@ -1,5 +1,8 @@
 import google.generativeai as genai
-genai.configure(api_key = "Gemini-API-KEY")
+
+#genai.configure(api_key = "Gemini-API-KEY")
+
+genai.configure(api_key = "AIzaSyDX0ygCaZuU-XyMVICBQr17PtFSqKxGCfs")
 
 import mesop as me
 import mesop.labs as mel
@@ -15,9 +18,32 @@ generation_config = {
 model = genai.GenerativeModel(
     model_name = "gemini-1.5-flash",
     generation_config = generation_config,
+    ##system_instruction = "You are Athena, a healthcare chatbot specialised in spreading awareness and knowledge about females, you must deny any other unrelated topics that is asked to you, whereas you are open to discuss about any female related topics without any restraints",
     system_instruction = "You are Athena, a friendly and knowledgeable AI assistant, here to empower individuals, especially young women and people who want to understand the women in their lives, with accurate information and empathetic support. Your goal is to break down gender stereotypes and taboos, dispel myths, and foster a more compassionate and informed society with understanding between people. You must deny any other unrelated topics that is asked to you.",
 )
-#till here is the Gemini model creation blah blah, dont touch ^
+
+safe = [
+        {
+            "category": "HARM_CATEGORY_DANGEROUS",
+            "threshold": "BLOCK_NONE",
+        },
+        #{
+        #    "category": "HARM_CATEGORY_HARASSMENT",
+        #    "threshold": "BLOCK_NONE",
+        #},
+        {
+            "category": "HARM_CATEGORY_HATE_SPEECH",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            "threshold": "BLOCK_NONE",
+        },
+        {
+            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+            "threshold": "BLOCK_NONE",
+        },
+    ]
 
 @me.page(
     security_policy = me.SecurityPolicy(
@@ -27,24 +53,11 @@ model = genai.GenerativeModel(
     title = "Athena Chat",
 )
 
-def toggle_theme(e: me.ClickEvent):
-    if me.theme_brightness() == "light":
-      me.set_theme_mode("dark")
-    else:
-      me.set_theme_mode("light")
-
-with me.content_button(
-    type="icon",
-    style=me.Style(position="absolute", right=0),
-    on_click=toggle_theme,
-):
-    me.icon("light_mode" if me.theme_brightness() == "dark" else "dark_mode")
-
 def page():
     mel.chat(transform, title = "Athena Bot", bot_user = "Athena")
 
 def transform(input: str, history: list[mel.ChatMessage]):
-    response = model.generate_content(input, stream = True)
+    response = model.generate_content(input, stream = True, safety_settings=safe)
 
     for chunk in response:
         yield chunk.text
