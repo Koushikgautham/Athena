@@ -38,8 +38,7 @@ def filter_query(query):
     for keyword in female_related_keywords:
         if keyword in query.lower():
             return "female_health"
-
-    # Use regular expressions for more flexible matching
+            
     female_related_pattern = r"women|female|girl|lady|woman"
     if re.search(female_related_pattern, query.lower()):
         return "female_health"
