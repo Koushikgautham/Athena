@@ -1,9 +1,5 @@
 import google.generativeai as genai
-
-#genai.configure(api_key = "Gemini-API-KEY")
-
-genai.configure(api_key = "AIzaSyDX0ygCaZuU-XyMVICBQr17PtFSqKxGCfs")
-
+genai.configure(api_key = "Gemini-API-KEY")
 
 import mesop as me
 import mesop.labs as mel
